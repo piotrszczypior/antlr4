@@ -10,10 +10,10 @@ start
     ;
 
 expression
-    : NUMBER
-    | SUB right=expression
-    | LPAREN inner=expression RPAREN
-    | left=expression operator=POW right=expression
-    | left=expression operator=(MUL|DIV) right=expression
-    | left=expression operator=(SUM|SUB) right=expression
+    : NUMBER                                                # NumberExpr
+    | SUB right=expression                                  # UnaryMinusExpr
+    | LPAREN inner=expression RPAREN                        # ParenthesesExpr
+    | left=expression operator=POW right=expression         # PowerExpr
+    | left=expression operator=(MUL|DIV) right=expression   # MulDivExpr
+    | left=expression operator=(SUM|SUB) right=expression   # AddSubExpr
     ;

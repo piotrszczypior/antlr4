@@ -12,11 +12,7 @@ DIV : '/' ;
 LPAREN : '(' ;
 RPAREN : ')' ;
 POW : '^' ;
-MOD : '%' ;
 
-
-INT : [0-9]+ ;
-FLOAT : [0-9]+ '.' [0-9]+ ;
-NUMBER  : INT | FLOAT ;
+NUMBER : [0-9]+ ;
 WS: [ \t\n\r\f]+ -> skip ;
 
