@@ -2,29 +2,34 @@ package org.example;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
+import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        //TIP create a CharStream that reads from standard input
-//        CharStream input = CharStreams.fromStream(System.in);
-        CharStream input = CharStreams.fromFileName("input.txt");
+        Scanner scanner = new Scanner(System.in);
+        CalculatorVisitor visitor = new CalculatorVisitor();
 
-        //TIP create a lexer that feeds off of input CharStream
-        ExprLexer lexer = new ExprLexer(input);
+        while (true) {
+            System.out.print(">> ");
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("exit")) {
+                break;
+            }
 
-        //TIP create a buffer of tokens pulled from the lexer
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
+            try {
+                CalculatorLexer lexer = new CalculatorLexer(CharStreams.fromString(input));
+                CommonTokenStream tokens = new CommonTokenStream(lexer);
+                CalculatorParser parser = new CalculatorParser(tokens);
+                ParseTree tree = parser.start();  // Entry rule
 
-        //TIP create a parser that feeds off the tokens buffer
-        ExprParser parser = new ExprParser(tokens);
+                Double result = visitor.visit(tree);
+                System.out.println("Wynik: " + result);
+            } catch (Exception e) {
+                System.out.println("Błąd: " + e.getMessage());
+            }
+        }
 
-        //TIP start parsing at the program rule
-        ParseTree tree = parser.program();
-        // System.out.println(tree.toStringTree(parser));
-
-        //TIP create a visitor to traverse the parse tree
-        org.example.LogicVisitor visitor = new org.example.LogicVisitor();
-        System.out.println(visitor.visit(tree));
+        scanner.close();
     }
 }
