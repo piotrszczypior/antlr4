@@ -2,6 +2,8 @@ package org.example;
 
 public class CalculatorVisitor extends CalculatorParserBaseVisitor<Double> {
 
+    private static final int NEGATIVE_OPERATOR = -1;
+
     @Override
     public Double visitStart(CalculatorParser.StartContext ctx) {
         return this.visit(ctx.expression());
@@ -19,7 +21,7 @@ public class CalculatorVisitor extends CalculatorParserBaseVisitor<Double> {
 
     @Override
     public Double visitMulDivExpr(CalculatorParser.MulDivExprContext ctx) {
-        if (ctx.operator.getText().equals("*")) {
+        if (CalculatorParser.MUL == ctx.operator.getType()) {
             return this.visit(ctx.left) * this.visit(ctx.right);
         }
 
@@ -32,8 +34,13 @@ public class CalculatorVisitor extends CalculatorParserBaseVisitor<Double> {
     }
 
     @Override
+    public Double visitModuloExpr(CalculatorParser.ModuloExprContext ctx) {
+        return this.visit(ctx.left) % this.visit(ctx.right);
+    }
+
+    @Override
     public Double visitAddSubExpr(CalculatorParser.AddSubExprContext ctx) {
-        if (ctx.operator.getText().equals("+")) {
+        if (CalculatorParser.SUM == ctx.operator.getType()) {
             return this.visit(ctx.left) + this.visit(ctx.right);
         }
 
@@ -42,7 +49,12 @@ public class CalculatorVisitor extends CalculatorParserBaseVisitor<Double> {
 
     @Override
     public Double visitUnaryMinusExpr(CalculatorParser.UnaryMinusExprContext ctx) {
-        return -1 * this.visit(ctx.right);
+        return NEGATIVE_OPERATOR * this.visit(ctx.right);
+    }
+
+    @Override
+    public Double visitFloorExpr(CalculatorParser.FloorExprContext ctx) {
+        return Math.floor(this.visit(ctx.left));
     }
 }
 

@@ -12,7 +12,12 @@ DIV : '/' ;
 LPAREN : '(' ;
 RPAREN : ')' ;
 POW : '^' ;
+MOD : '%';
+FLOOR : '_' ;
 
-NUMBER : [0-9]+ ;
+NUMBER  : [0-9]+
+        | [0-9]+ '.' [0-9]+
+        | '.' [0-9]+
+        ;
 WS: [ \t\n\r\f]+ -> skip ;
 
