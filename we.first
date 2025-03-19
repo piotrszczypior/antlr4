@@ -1,0 +1,21 @@
+var x = 2;
+while (x < 5) {
+    print(x);
+
+    x = x + 5;
+}
+print(x + 2);
+
+if (x != 0) {
+}
+
+for x in range(5) {
+   x = x + 1;
+   print(x);
+}
+
+if(0) {
+    print(x);
+} else {
+   print(x + 3);
+}

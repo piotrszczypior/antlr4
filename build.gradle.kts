@@ -26,7 +26,7 @@ dependencies {
 
 tasks.generateGrammarSource {
     source = fileTree("src/main/antlr")
-    outputDirectory = file("src/main/gen/org/example")
+    outputDirectory = file("src/main/gen")
     arguments = listOf("-visitor", "-no-listener")
 }
 
@@ -38,9 +38,6 @@ sourceSets {
     }
 }
 
-//tasks.build {
-//    dependsOn(tasks.generateGrammarSource)
-//}
 
 tasks.test {
     useJUnitPlatform()
