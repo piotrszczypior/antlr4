@@ -1,10 +1,10 @@
-package com.org.interpreter;
+package org.pwr.interpreter;
 
-import grammar.FirstBaseVisitor;
-import grammar.FirstParser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.pwr.grammar.FirstBaseVisitor;
+import org.pwr.grammar.FirstParser;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,11 +1,13 @@
 var antlr4Version = "4.13.2"
 
+var grammarPackage = "org.pwr.grammar"
+
 plugins {
     id("java")
     antlr
 }
 
-group = "org.example"
+group = "org.pwr"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -26,8 +28,8 @@ dependencies {
 
 tasks.generateGrammarSource {
     source = fileTree("src/main/antlr")
-    outputDirectory = file("src/main/gen/grammar")
-    arguments = listOf("-visitor", "-no-listener", "-package", "grammar")
+    outputDirectory = file("src/main/gen/$grammarPackage")
+    arguments = listOf("-visitor", "-no-listener", "-package", grammarPackage)
 }
 
 sourceSets {
@@ -38,7 +40,14 @@ sourceSets {
     }
 }
 
+tasks.compileJava {
+    dependsOn(tasks.generateGrammarSource)
+}
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.build {
+    dependsOn(tasks.generateGrammarSource)
 }

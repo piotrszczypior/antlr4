@@ -1,10 +1,9 @@
-package com.org;
+package org.pwr.interpreter;
 
-import com.org.interpreter.CalculatorVisitor;
-import grammar.FirstLexer;
-import grammar.FirstParser;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.pwr.grammar.FirstLexer;
+import org.pwr.grammar.FirstParser;
 
 import java.io.IOException;
 
