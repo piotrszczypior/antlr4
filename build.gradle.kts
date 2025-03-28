@@ -26,8 +26,8 @@ dependencies {
 
 tasks.generateGrammarSource {
     source = fileTree("src/main/antlr")
-    outputDirectory = file("src/main/gen")
-    arguments = listOf("-visitor", "-no-listener")
+    outputDirectory = file("src/main/gen/grammar")
+    arguments = listOf("-visitor", "-no-listener", "-package", "grammar")
 }
 
 sourceSets {

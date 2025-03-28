@@ -1,12 +1,23 @@
+package com.org.interpreter;
+
+import grammar.FirstBaseVisitor;
+import grammar.FirstParser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 
 public class CalculatorVisitor extends FirstBaseVisitor<Integer> {
 
     private final Map<String, Integer> memory = new HashMap<>();
+
+    private final Map<String, FirstParser.DefStatementContext> stack = new HashMap<>();
+
+    private final Map<String, Map<String, Integer>> localFunctionVariables = new HashMap<>();
 
     private TokenStream tokStream;
 
@@ -156,5 +167,47 @@ public class CalculatorVisitor extends FirstBaseVisitor<Integer> {
         }
 
         return result;
+    }
+
+    @Override
+    public Integer visitDefStatement(FirstParser.DefStatementContext ctx) {
+        stack.put(ctx.ID().getText(), ctx);
+        localFunctionVariables.put(ctx.ID().getText(), new HashMap<>());
+        return 0;
+    }
+
+    @Override
+    public Integer visitDefCallStatement(FirstParser.DefCallStatementContext ctx) {
+        String functionName = ctx.ID().getText();
+        FirstParser.DefStatementContext functionCtx = stack.get(functionName);
+
+        if (functionCtx.isEmpty()) {
+            throw new RuntimeException("Function " + functionName + " undefined");
+        }
+
+        List<FirstParser.ExprContext> args = ctx.expr() != null && !ctx.isEmpty()
+                                             ? ctx.expr()
+                                             : List.of();
+        List<String> params = functionCtx.params() != null
+                              ? functionCtx.params().ID().stream().map(ParseTree::getText).toList()
+                              : List.of();
+
+        if (args.size() != params.size()) {
+            throw new RuntimeException("Wrong number of arguments in function " + functionName);
+        }
+        // Map<String, Integer> localVariables = localFunctionVariables.get(functionName);
+        // for (int i = 0; i < args.size(); i++) {
+        //     localVariables.put(params.get(i), this.visit(args.get(i)));
+        // }
+        for (int i = 0; i < args.size(); i++) {
+            memory.put(params.get(i), this.visit(args.get(i)));
+        }
+
+        return visit(functionCtx.block());
+    }
+
+    @Override
+    public Integer visitReturnStatement(FirstParser.ReturnStatementContext ctx) {
+        return visit(ctx.expr());
     }
 }

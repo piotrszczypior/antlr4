@@ -19,3 +19,16 @@ if(0) {
 } else {
    print(x + 3);
 }
+
+def aaa(g) {
+    g = 2;
+    print(g);
+}
+
+aaa(4);
+
+def method() {
+    return 2 + 7;
+}
+
+print(method());
