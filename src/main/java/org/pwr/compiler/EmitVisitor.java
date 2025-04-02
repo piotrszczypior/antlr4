@@ -12,6 +12,10 @@ public class EmitVisitor extends FirstBaseVisitor<ST> {
 
     private final STGroup stGroup;
 
+    private int ifIdentifier = 0;
+
+    private int equalIdentifier = 0;
+
     public EmitVisitor(STGroup group) {
         super();
         this.stGroup = group;
@@ -30,10 +34,10 @@ public class EmitVisitor extends FirstBaseVisitor<ST> {
         return aggregate;
     }
 
-    @Override
-    public ST visitTerminal(TerminalNode node) {
-        return new ST("Terminal node:<n>").add("n", node.getText());
-    }
+//    @Override
+//    public ST visitTerminal(TerminalNode node) {
+//        return new ST("Terminal node:<n>").add("n", node.getText());
+//    }
 
     @Override
     public ST visitIntStatement(FirstParser.IntStatementContext ctx) {
@@ -74,18 +78,50 @@ public class EmitVisitor extends FirstBaseVisitor<ST> {
     }
 
     @Override
-    public ST visitOperationStatement(FirstParser.OperationStatementContext ctx) {
+    public ST visitArithmeticOperationStatement(FirstParser.ArithmeticOperationStatementContext ctx) {
 
         return switch (ctx.operation.getType()) {
             case FirstLexer.SUB -> buildOperationTemplate(stGroup.getInstanceOf("subtraction"), ctx);
             case FirstLexer.ADD -> buildOperationTemplate(stGroup.getInstanceOf("addition"), ctx);
             case FirstLexer.MUL -> buildOperationTemplate(stGroup.getInstanceOf("multiplication"), ctx);
             case FirstLexer.DIV -> buildOperationTemplate(stGroup.getInstanceOf("division"), ctx);
-            default -> stGroup.getInstanceOf("operation");
+            default -> throw new IllegalStateException("Unexpected arithmetic statement: " + ctx.operation.getType());
         };
     }
 
-    private ST buildOperationTemplate(ST template, FirstParser.OperationStatementContext ctx) {
+    @Override
+    public ST visitLogicOperationStatement(FirstParser.LogicOperationStatementContext ctx) {
+
+        return getLogicOperationTemplate(ctx)
+                .add("p1", visit(ctx.left))
+                .add("p2", visit(ctx.right));
+    }
+
+    @Override
+    public ST visitIfStatement(FirstParser.IfStatementContext ctx) {
+        ST ifTemplate = stGroup.getInstanceOf("if")
+                .add("id", ifIdentifier++)
+                .add("condition", visit(ctx.expr()))
+                .add("thenStatement", visit(ctx.block().getFirst()));
+
+        if (ctx.block().size() > 1) {
+            ifTemplate.add("elseStatement", visit(ctx.block().getLast()));
+        }
+        return ifTemplate;
+    }
+
+
+    private ST getLogicOperationTemplate(FirstParser.LogicOperationStatementContext ctx) {
+        return switch (ctx.operation.getType()) {
+            case FirstLexer.EQ -> stGroup.getInstanceOf("comparisonEqual").add("id", equalIdentifier++);
+            case FirstLexer.NEQ -> stGroup.getInstanceOf("comparisonNotEqual");
+
+            default -> throw new IllegalStateException("Unexpected logic statement: " + ctx.operation.getType());
+        };
+    }
+
+
+    private ST buildOperationTemplate(ST template, FirstParser.ArithmeticOperationStatementContext ctx) {
         return template.add("p1", visit(ctx.left)).add("p2", visit(ctx.right));
     }
 }

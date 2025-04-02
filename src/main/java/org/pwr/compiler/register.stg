@@ -53,3 +53,34 @@ division(p1, p2) ::= <<
 <twoop(p1,p2)>
 DIV A, B
 >>
+
+comparisonEqual(p1, p2, id) ::= <<
+<twoop(p1,p2)>
+CMP A,B
+
+JNE label_comparison_<id>
+MOV A,#1
+JMP label_comparsion_end_<id>
+
+label_comparison_<id>:
+    MOV A,#0
+
+label_comparsion_end_<id>:
+>>
+
+comparisonNotEqual(p1, p2) ::= <<
+<twoop(p1,p2)>
+CMP A,B
+>>
+
+if(condition, thenStatement, elseStatement, id) ::= <<
+<condition>
+    JE label_else_<id>
+<thenStatement>
+    JMP label_endif_<id>
+
+label_else_<id>:
+    <elseStatement>
+
+label_endif_<id>:
+>>

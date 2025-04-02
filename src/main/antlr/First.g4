@@ -20,8 +20,8 @@ params  : ID (COMA ID)*
         ;
 
 expr    : left=expr operation=(MUL|DIV) right=expr                                          #operationStatement
-        | left=expr operation=(ADD|SUB) right=expr                                          #operationStatement
-        | left=expr operation=(NOT|EQ|NEQ|LT|LTE|GT|GTE) right=expr                         #operationStatement
+        | left=expr operation=(ADD|SUB) right=expr                                          #arithmeticOperationStatement
+        | left=expr operation=(NOT|EQ|NEQ|LT|LTE|GT|GTE) right=expr                         #logicOperationStatement
         | left=expr operation=(AND|OR) right=expr                                           #operationStatement
         | INT                                                                               #intStatement
         | LBRACKET expr RBRACKET                                                            #parentheses
