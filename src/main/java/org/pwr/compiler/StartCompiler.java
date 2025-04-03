@@ -49,6 +49,6 @@ public class StartCompiler {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        res.inspect();
+        // res.inspect();
     }
 }

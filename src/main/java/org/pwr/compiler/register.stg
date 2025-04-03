@@ -19,6 +19,21 @@ PUSH A
 POP B
 >>
 
+parameter(p) ::= <<
+<p>
+PUSH A
+>>
+
+popParameter(p) ::= <<
+POP B
+>>
+
+takeFromStack(p, i) ::= <<
+<declaration(p)>
+MOV A, [BP+<i>]
+MOV [<p>], A
+>>
+
 declaration(name) ::= <<
 DD <name>
 >>
@@ -83,4 +98,22 @@ label_else_<id>:
     <elseStatement>
 
 label_endif_<id>:
+>>
+
+functionDefinition(name, parameters, body, returnJmp) ::= <<
+<name>:
+    PUSH BP
+    <parameters:{p | <takeFromStack(p, i)>}; separator="\n">
+
+    <body>
+    MOV BP, SP
+
+    POP BP
+    RET
+>>
+
+functionCall(name, parameters, body) ::= <<
+<parameters:parameter(); separator="\n">
+CALL <name>
+<parameters:popParameter();  separator="\n">
 >>
