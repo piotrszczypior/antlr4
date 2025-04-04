@@ -1,29 +1,29 @@
-    square:
-        PUSH BP
-        DD x
-        MOV A, [BP+1]
-        MOV [x], A
-        DD y
-        MOV A, [BP+2]
-        MOV [y], A
+    MOV A,#0
+    PUSH A
+    MOV A,#1
+    POP B
+    PUSH B
+    MOV B,#0
+    CMP A,B
+    JE label_and_false_0
+    POP B
+    MOV A,#0
+    CMP B,A
+    JE label_and_false_0
+    MOV A,#1
+    JMP label_and_end_0
 
-            DD a
-            MOV A,[x]
-            MOV [a],A
+    label_and_false_0:
+        MOV A,#0
 
-        MOV BP, SP
+    label_and_end_0:
+        JE label_else_0
+        DD a
+        MOV A,#3
+        MOV [a],A
 
-        POP BP
-        RET
-        MOV A,#2
-        PUSH A
-        MOV A,#11
-        POP B
-        ADD A, B
-        PUSH A
-        MOV A,#2
-        PUSH A
-        CALL square
-        POP B
-        POP B
+        JMP label_endif_0
 
+    label_else_0:
+
+    label_endif_0:

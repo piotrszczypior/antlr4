@@ -21,8 +21,9 @@ params  : ID (COMA ID)*
 
 expr    : left=expr operation=(MUL|DIV) right=expr                                          #operationStatement
         | left=expr operation=(ADD|SUB) right=expr                                          #arithmeticOperationStatement
-        | left=expr operation=(NOT|EQ|NEQ|LT|LTE|GT|GTE) right=expr                         #logicOperationStatement
-        | left=expr operation=(AND|OR) right=expr                                           #operationStatement
+        | left=expr operation=(EQ|NEQ|LT|LTE|GT|GTE) right=expr                             #logicOperationStatement
+        | left=expr operation=(AND|OR) right=expr                                           #logicOperationStatement
+        | operation=NOT right=expr                                                          #notStatement
         | INT                                                                               #intStatement
         | LBRACKET expr RBRACKET                                                            #parentheses
         | <assoc=right> ID EQUAL_SIGN expr                                                  #assign

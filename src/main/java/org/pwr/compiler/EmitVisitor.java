@@ -15,7 +15,7 @@ public class EmitVisitor extends FirstBaseVisitor<ST> {
 
     private int ifIdentifier = 0;
 
-    private int equalIdentifier = 0;
+    private int logicJumpIdentifier = 0;
 
     public EmitVisitor(STGroup group) {
         super();
@@ -95,7 +95,8 @@ public class EmitVisitor extends FirstBaseVisitor<ST> {
 
         return getLogicOperationTemplate(ctx)
                 .add("p1", visit(ctx.left))
-                .add("p2", visit(ctx.right));
+                .add("p2", visit(ctx.right))
+                .add("id", logicJumpIdentifier++);
     }
 
     @Override
@@ -117,6 +118,7 @@ public class EmitVisitor extends FirstBaseVisitor<ST> {
         return stGroup.getInstanceOf("functionDefinition")
                 .add("name", ctx.ID().getText())
                 .add("parameters", ctx.params().ID())
+                .add("numerOfParams", ctx.params().ID().size() + 1)
                 .add("body", visit(ctx.block()));
     }
 
@@ -129,10 +131,24 @@ public class EmitVisitor extends FirstBaseVisitor<ST> {
                 .add("parameters", argsTemplates);
     }
 
+    @Override
+    public ST visitNotStatement(final FirstParser.NotStatementContext ctx) {
+
+        return stGroup.getInstanceOf("notStatement")
+                .add("p1", visit(ctx.right))
+                .add("id", logicJumpIdentifier++);
+    }
+
     private ST getLogicOperationTemplate(FirstParser.LogicOperationStatementContext ctx) {
         return switch (ctx.operation.getType()) {
-            case FirstLexer.EQ -> stGroup.getInstanceOf("comparisonEqual").add("id", equalIdentifier++);
+            case FirstLexer.EQ -> stGroup.getInstanceOf("comparisonEqual");
             case FirstLexer.NEQ -> stGroup.getInstanceOf("comparisonNotEqual");
+            case FirstLexer.AND -> stGroup.getInstanceOf("andStatement");
+            case FirstLexer.OR -> stGroup.getInstanceOf("orStatement");
+            case FirstLexer.LT -> stGroup.getInstanceOf("lessThan");
+            case FirstLexer.LTE -> stGroup.getInstanceOf("lessThanOrEqual");
+            case FirstLexer.GT -> stGroup.getInstanceOf("greaterThan");
+            case FirstLexer.GTE -> stGroup.getInstanceOf("greaterThanOrEqual");
 
             default -> throw new IllegalStateException("Unexpected logic statement: " + ctx.operation.getType());
         };

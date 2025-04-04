@@ -88,6 +88,113 @@ comparisonNotEqual(p1, p2) ::= <<
 CMP A,B
 >>
 
+andStatement(p1, p2, id) ::= <<
+<twoop(p1,p2)>
+PUSH B
+MOV B,#0
+CMP A,B
+JE label_and_false_<id>
+POP B
+MOV A,#0
+CMP B,A
+JE label_and_false_<id>
+MOV A,#1
+JMP label_and_end_<id>
+
+
+label_and_false_<id>:
+    MOV A,#0
+
+label_and_end_<id>:
+>>
+
+orStatement(p1, id) ::= <<
+<twoop(p1,p2)>
+PUSH B
+MOV B,#1
+CMP A,B
+JE label_or_true_<id>
+POP B
+MOV A, #1
+CMP B,A
+JNE label_or_true_<id>
+MOV A,#0
+JMP label_or_end_<id>
+
+label_or_true_<id>:
+    MOV A,#1
+
+label_or_end_<id>:
+>>
+
+notStatement(p1, id) ::= <<
+<p1>
+PUSH A
+JZ label_return_true_<id>
+MOV A,#0
+JMP label_not_end_<id>
+
+label_return_true_<id>:
+    MOV A,#1
+
+label_not_end_<id>:
+>>
+
+lessThan(p1, p2, id) ::= <<
+<twoop(p1,p2)>
+CMP A,B
+JNL label_logic_<id>
+MOV A,#0
+JMP label_logic_end_<id>
+
+label_logic_<id>:
+    MOV A,#1
+
+label_logic_end_<id>:
+>>
+
+lessThanOrEqual(p1, p2, id) ::= <<
+<twoop(p1,p2)>
+CMP A,B
+JNLE label_logic_<id>
+MOV A,#0
+
+JMP label_logic_end_<id>
+
+label_logic_<id>:
+    MOV A,#1
+
+label_logic_end_<id>:
+>>
+
+greaterThan(p1, p2, id) ::= <<
+<twoop(p1,p2)>
+CMP A,B
+JNG label_logic_<id>
+MOV A,#1
+
+JMP label_logic_end_<id>
+
+label_logic_<id>:
+    MOV A,#0
+
+label_logic_end_<id>:
+>>
+
+greaterThanOrEqual(p1, p2, id) ::= <<
+<twoop(p1,p2)>
+CMP A,B
+JNGE label_logic_<id>
+MOV A,#1
+
+JMP label_logic_end_<id>
+
+label_logic_<id>:
+    MOV A,#0
+
+label_logic_end_<id>:
+>>
+
 if(condition, thenStatement, elseStatement, id) ::= <<
 <condition>
     JE label_else_<id>
@@ -100,10 +207,11 @@ label_else_<id>:
 label_endif_<id>:
 >>
 
-functionDefinition(name, parameters, body, returnJmp) ::= <<
+functionDefinition(name, parameters, body, numerOfParams) ::= <<
 <name>:
     PUSH BP
-    <parameters:{p | <takeFromStack(p, i)>}; separator="\n">
+    MOV BP, #<numerOfParams>
+    <parameters:{p | <takeFromStack(p, i)>)>}; separator="\n">
 
     <body>
     MOV BP, SP
